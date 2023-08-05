@@ -1,15 +1,31 @@
 <script setup>
+import { onMounted } from 'vue';
 import { useCountStore } from './store/counter2';
+import { storeToRefs } from 'pinia';
 const counter = useCountStore()
+
+// 解构赋值会导致响应式丢失,需要加上storeToRefs,才会响应式更新
+const {count, doubleCount} = storeToRefs(counter) 
+// 如果需要直接从原来的counter中解构
+const {increment, getList}  = counter
 const modify = () => {
-  counter.increment()
+  increment()
 }
+ onMounted(() => {
+  getList()
+})
 </script>
 
 <template>
   <div>
-    {{ counter.count }}
-    <button @click="modify">修改</button>
+    {{count }}
+    <button @click="modify">{{count}}</button>
+    <div>{{ doubleCount }}</div>
+    <ul>
+      <li v-for="(item) in counter.list" :key="item.id">
+        {{ item.name }}
+      </li>
+    </ul>
   </div>
 </template>
 
